@@ -2,38 +2,35 @@
 
 const fs = require("fs");
 const Helper = require("../helper");
-const colors = require("colors/safe");
 const path = require("path");
 const _ = require("lodash");
 const themes = new Map();
 
 module.exports = {
-	getAll: getAll,
-	getFilename: getFilename,
+	addTheme,
+	getAll,
+	getFilename,
+	loadLocalThemes,
 };
 
-fs.readdir(path.join(__dirname, "..", "..", "public", "themes"), (err, builtInThemes) => {
-	if (err) {
-		return;
-	}
-	builtInThemes
-		.filter((theme) => theme.endsWith(".css"))
-		.map(makeLocalThemeObject)
-		.forEach((theme) => themes.set(theme.name, theme));
-});
+function loadLocalThemes() {
+	fs.readdir(path.join(__dirname, "..", "..", "public", "themes"), (err, builtInThemes) => {
+		if (err) {
+			return;
+		}
+		builtInThemes
+			.filter((theme) => theme.endsWith(".css"))
+			.map(makeLocalThemeObject)
+			.forEach((theme) => themes.set(theme.name, theme));
+	});
+}
 
-fs.readdir(Helper.getPackagesPath(), (err, packages) => {
-	if (err) {
-		return;
+function addTheme(packageName, packageObject) {
+	const theme = makePackageThemeObject(packageName, packageObject);
+	if (theme) {
+		themes.set(theme.name, theme);
 	}
-	packages
-		.map(makePackageThemeObject)
-		.forEach((theme) => {
-			if (theme) {
-				themes.set(theme.name, theme);
-			}
-		});
-});
+}
 
 function getAll() {
 	return _.sortBy(Array.from(themes.values()), "displayName");
@@ -54,23 +51,7 @@ function makeLocalThemeObject(css) {
 	};
 }
 
-function getModuleInfo(packageName) {
-	let module;
-	try {
-		module = require(Helper.getPackageModulePath(packageName));
-	} catch (e) {
-		log.warn(`Specified theme ${colors.yellow(packageName)} is not installed in packages directory`);
-		return;
-	}
-	if (!module.thelounge) {
-		log.warn(`Specified theme ${colors.yellow(packageName)} doesn't have required information.`);
-		return;
-	}
-	return module.thelounge;
-}
-
-function makePackageThemeObject(moduleName) {
-	const module = getModuleInfo(moduleName);
+function makePackageThemeObject(moduleName, module) {
 	if (!module || module.type !== "theme") {
 		return;
 	}
