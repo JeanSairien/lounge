@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const colors = require("colors/safe");
-const Helper = require("../helper");
+const Helper = require("../../helper");
 const themes = require("./themes");
 const packageMap = new Map();
 

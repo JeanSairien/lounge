@@ -15,10 +15,10 @@ const net = require("net");
 const Identification = require("./identification");
 const changelog = require("./plugins/changelog");
 
-const themes = require("./plugins/themes");
+const themes = require("./plugins/packages/themes");
 themes.loadLocalThemes();
 
-const packages = require("./plugins/packages");
+const packages = require("./plugins/packages/index");
 packages.loadPackages();
 
 // The order defined the priority: the first available plugin is used

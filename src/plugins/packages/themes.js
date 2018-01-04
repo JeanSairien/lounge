@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs");
-const Helper = require("../helper");
+const Helper = require("../../helper");
 const path = require("path");
 const _ = require("lodash");
 const themes = new Map();
