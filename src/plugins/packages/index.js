@@ -47,8 +47,8 @@ function loadPackages() {
 				themes.addTheme(packageName, packageFile);
 			}
 
-			if (packageFile.run) {
-				packageFile.run(packageApi(packageName));
+			if (packageFile.onServerStart) {
+				packageFile.onServerStart(packageApi(packageName));
 			}
 		});
 	});
