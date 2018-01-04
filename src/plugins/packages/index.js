@@ -14,9 +14,12 @@ module.exports = {
 	loadPackages,
 };
 
-const packageApi = function(packageName) {
+const packageApis = function(packageName) {
 	return {
-		addStylesheet: addStylesheet.bind(this, packageName),
+		Themes: {
+			addTheme: themes.addTheme,
+			addStylesheet: addStylesheet.bind(this, packageName),
+		},
 	};
 };
 
@@ -48,7 +51,7 @@ function loadPackages() {
 			}
 
 			if (packageFile.onServerStart) {
-				packageFile.onServerStart(packageApi(packageName));
+				packageFile.onServerStart(packageApis(packageName));
 			}
 		});
 	});
