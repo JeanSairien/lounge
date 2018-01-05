@@ -11,8 +11,6 @@ program
 	.on("--help", Utils.extraHelp)
 	.action(function(packageName) {
 		const fs = require("fs");
-		const fsextra = require("fs-extra");
-		const path = require("path");
 		const child = require("child_process");
 		const packageJson = require("package-json");
 
@@ -32,20 +30,9 @@ program
 				process.exit(1);
 			}
 
+			const packagesParent = Utils.preparePackagesDir();
+
 			log.info(`Installing ${colors.green(packageName)}...`);
-
-			const packagesPath = Helper.getPackagesPath();
-			const packagesParent = path.dirname(packagesPath);
-			const packagesConfig = path.join(packagesParent, "package.json");
-
-			// Create node_modules folder, otherwise npm will start walking upwards to find one
-			fsextra.ensureDirSync(packagesPath);
-
-			// Create package.json with private set to true to avoid npm warnings
-			fs.writeFileSync(packagesConfig, JSON.stringify({
-				private: true,
-				description: "Packages for The Lounge. All packages in node_modules directory will be automatically loaded.",
-			}, null, "\t"));
 
 			const npm = child.spawn(
 				process.platform === "win32" ? "npm.cmd" : "npm",

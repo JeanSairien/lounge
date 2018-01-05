@@ -3,6 +3,7 @@
 const _ = require("lodash");
 const colors = require("colors/safe");
 const fs = require("fs");
+const fsextra = require("fs-extra");
 const Helper = require("../helper");
 const path = require("path");
 
@@ -100,6 +101,27 @@ class Utils {
 		}
 
 		return memo;
+	}
+
+	// If necessary, creates the directory where The Lounge-specific packages will
+	// be installed, as well as an informative `package.json` file.
+	// Returns the location where this directory is created.
+	static preparePackagesDir() {
+		const packagesPath = Helper.getPackagesPath();
+		const packagesParent = path.dirname(packagesPath);
+		const packagesConfig = path.join(packagesParent, "package.json");
+
+		// Create node_modules folder, otherwise npm will start walking upwards to
+		// find one
+		fsextra.ensureDirSync(packagesPath);
+
+		// Create package.json with private set to true to avoid npm warnings
+		fs.writeFileSync(packagesConfig, JSON.stringify({
+			private: true,
+			description: "Packages for The Lounge. All packages in node_modules directory will be automatically loaded.",
+		}, null, "\t"));
+
+		return packagesParent;
 	}
 }
 
